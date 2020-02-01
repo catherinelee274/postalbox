@@ -27,14 +27,23 @@ export default class Profile extends Component {
   render() {
     const { handleSignOut, userSession } = this.props;
     const { person } = this.state;
+    const videoConstraints = {
+      facingMode: "user"
+    };
     return (
       !userSession.isSignInPending() ?
       <div className="panel-welcome" id="section-2">
-        <div className="avatar-section">
+        {/* <div className="avatar-section">
           <img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" alt=""/>
-        </div>
+        </div> */}
         {/* <h1>Hello, <span id="heading-name">{ person.name() ? person.name() : 'Nameless Person' }</span>!</h1> */}
         <h1>Welcome</h1>
+
+        {/* Insert Webcam thing */}
+
+        <div>
+                <Webcam videoConstraints={videoConstraints}/>
+        </div>
 
         <p className="lead">
           <button
