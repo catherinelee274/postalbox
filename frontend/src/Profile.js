@@ -200,7 +200,7 @@ export default class Profile extends Component {
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*'
             },
-            body: JSON.stringify({image: image})
+            body: JSON.stringify({image: user.image})
             }).then((res) => {
               console.log(res);
               return res.json();
@@ -211,11 +211,22 @@ export default class Profile extends Component {
             })
             .catch((err)=>console.log(err));
 
-          // var dotProduct = math.dot(currEmbedding, userEmbedding);
-          // if(dotProduct > max){
-          //   max = dotProduct;
-          //   maxUserId = user.boxId;
-          // }
+            let promises = [userEmbedding, currEmbedding];
+            Promise.all(promises).then((embeddings) => {
+              let userEmb = embeddings[0].embedding;
+              let currEmb = embeddings[1].embedding;
+              console.log(userEmb, currEmb);
+            
+              var dotProduct = math.dot(currEmb, userEmb);
+              var currNorm = math.sqrt(math.dot(currEmb, currEmb));
+              var userNorm = math.sqrt(math.dot(userEmb, userEmb));
+              let cosineSimilarity = dotProduct / currNorm / userNorm;
+              if(cosineSimilarity > max && cosineSimilarity > 0.5){
+                max = cosineSimilarity;
+                maxUserId = user.boxId;
+              }
+              console.log(cosineSimilarity);
+            })
 
         }
       }
