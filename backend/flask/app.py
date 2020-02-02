@@ -3,6 +3,8 @@
 from flask import Flask, request, jsonify
 
 import os
+from time import sleep
+
 import pygame, sys
 
 from pygame.locals import *
@@ -12,15 +14,25 @@ import pygame.camera
 from PIL import Image
 import pytesseract
 
+import serial
+
+import threading
+
 app = Flask(__name__)
 
 # pygame camera init
-# pygame.init()
-# pygame.camera.init()
-# width = 640
-# height = 480
-# cam = pygame.camera.Camera("/dev/video0", (width, height))
-# cam.start()
+"""
+pygame.init()
+pygame.camera.init()
+width = 640
+height = 480
+cam = pygame.camera.Camera("/dev/video1", (width, height))
+cam.start()
+"""
+
+device = "/dev/cu.usbmodem14101"
+ser = serial.Serial(device, 9600)
+sleep(1)
 
 
 class User:
@@ -43,13 +55,73 @@ class User:
 state = []
 
 
+def send(cmd: str, bin: int):
+    print("sending")
+    c = f"{cmd} {str(bin)}"
+    print(c)
+    ser.write(c.encode("utf-8"))
+
+
+def sort(bin: int):
+    send("sort", bin)
+
+
+def blink(bin: int):
+    for _ in range(5):
+        open(bin)
+        sleep(2)
+        close(bin)
+        sleep(1)
+
+
+def open(bin: int):
+    send("open", bin)
+
+
+def close(bin: int):
+    send("close", bin)
+
+
+# checks for mail
+def mailThread():
+    while True:
+        try:
+            if "mail" in str(ser.readline()):
+                print("mail!")
+                otherOCR()
+        except Exception as e:
+            print(e)
+            print("fuck")
+
+
+def otherOCR():
+    global state
+    # take a picture and convert to pil
+    # image = cam.get_image()
+    # pygame.image.save(image, "temp.jpg")
+    # im = Image.open("temp.jpg")
+    im = Image.open("test.png")
+
+    # run tesseract
+    txt = pytesseract.image_to_string(im)
+    print(txt)
+
+    for user in state:
+        print(user.name, user.uid, user.slot)
+        if user.name in txt or user.uid in txt:
+            # pyserial to arduino?
+            user.count += 1
+            sort(user.slot)
+            break
+
+
 @app.route("/ocr")
 def ocr():
     global state
     # take a picture and convert to pil
     # image = cam.get_image()
-    # str_img = pygame.image.tostring(image, "RGBA", False)
-    # im = Image.frombytes("RGBA", (1280, 720), str_img)
+    # pygame.image.save(image, "temp.jpg")
+    # im = Image.open("temp.jpg")
     im = Image.open("test.png")
 
     # run tesseract
@@ -83,5 +155,19 @@ def put_state():
     return jsonify(states=[s.serialize() for s in state])
 
 
+@app.route("/clear-state", methods=["POST"])
+def clear_state():
+    global state
+    body = request.json
+    prev = state
+    for user in state:
+        if user.name == body["name"]:
+            user.count = 0
+            blink(user.slot)
+            return jsonify(states=[s.serialize() for s in prev])
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    t = threading.Thread(target=mailThread, args=(), daemon=True)
+    t.start()
+    app.run(host="0.0.0.0", port=6969)

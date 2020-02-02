@@ -27,7 +27,7 @@ void setup() {
 void loop() {
     // laser broken by envelope!
     if(analogRead(laserBreakPin) < laserThreshold) {
-        Serial.println("OH FUCK THERE'S A GODDAMN BUTT GRABBER");
+        Serial.println("mail");
     }
     
     String incoming = Serial.readString();
@@ -79,11 +79,11 @@ void loop() {
             Serial.println("ok");
         }
         else if(cmd[0].equals("open")) {
-            digitalWrite(cmd[1].toInt(), HIGH);
+            digitalWrite(binPins[cmd[1].toInt()], HIGH);
             Serial.println("ok");
         }
         else if(cmd[0].equals("close")) {
-            digitalWrite(cmd[1].toInt(), LOW);
+            digitalWrite(binPins[cmd[1].toInt()], LOW);
             Serial.println("ok");
         }
         else {
