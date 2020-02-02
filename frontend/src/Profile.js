@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Person, handlePendingSignIn,
+  Person, handlePendingSignIn, ecPairToHexString,
 } from 'blockstack';
 import { signInputs } from 'blockstack/lib/operations';
 
@@ -12,6 +12,9 @@ const math = create(all, config)
 
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 const {Storage} = require('@google-cloud/storage');
+
+var fs = require('fs');
+// var base64ToImage = require('base64-to-image');
 
 var currentId = 0; 
 const options = { decrypt: true };
@@ -28,16 +31,30 @@ export default class Profile extends Component {
   	  	avatarUrl() {
   	  	  return avatarFallbackImage;
   	  	},
-  	  },
+      },
+      value:''
     };
     
     this.webcam = React.createRef();
+    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(){
+  
+
+  handleChange(event) {
+    console.log(event.target.value);
+    // this.setState({value: event.target.value});
+    this.setState({value: event.target.value});
 
   }
+
+  handleSubmit(event) {
+    // console.log(this.state.value);
+    return this.event.value;
+    event.preventDefault();
+  }
+
   render() {
     const { handleSignOut, userSession } = this.props;
     const { person } = this.state;
@@ -58,17 +75,18 @@ export default class Profile extends Component {
         <div>      
           <Webcam ref={this.webcam}
             audio={false}
-            height={720}
+            height={500} 
             screenshotFormat="image/jpeg"
-            width={1280}
+            width={500} 
+            forceScreenshotSourceSize={true}
             videoConstraints={videoConstraints}
           />
         </div>
 
-      <form>
+      <form onSubmit={this.handleSubmit}>
         <label>
           Full Name:
-          <input type="text" name={this.state.fullName} />
+          <input type="text" name={this.state.value} onChange={this.handleChange} />
         </label>
       </form>
 
@@ -78,9 +96,8 @@ export default class Profile extends Component {
             id="signup-button"
             // onClick={handleSignOut.bind(this)} // CHANGE ON CLICK
             onClick={()=>{
-              // console.log(this.state.fullName);
-              var name = "test name";
-              this.signUp(userSession,this.webcam.current.getScreenshot(),name);
+              console.log(this.state.value);
+              this.signUp(userSession,this.webcam.current.getScreenshot(),this.state.value);
             }}
           >
             Sign Up
@@ -91,11 +108,8 @@ export default class Profile extends Component {
             id="signin-button"
             onClick={()=>{
               console.log('sign in');
-              // console.log("name")
-              var name = "test name";
-              this.signIn(userSession,this.webcam.current.getScreenshot(),name); //webcam returns base encoded x64 
-            } 
-            } 
+              this.signIn(userSession,this.webcam.current.getScreenshot(),this.state.value); //webcam returns base encoded x64 
+            }} 
             
           >
             Sign In
@@ -155,26 +169,61 @@ export default class Profile extends Component {
       // var jsonObject = JSON.parse(json);
       var jsonObject = JSON.parse(responseData);
       // jsonObject.name
+      // console.log("hi");
       for(var user of jsonObject){
-        // console.log(JSON.stringify(user));
-        // console.log(name.toUpperCase() == user.fullName.toUpperCase()); 
         if(name.toUpperCase() == user.fullName.toUpperCase()){
           //find matching image
-          // console.log(JSON.parse(atob(user.image)));
+          var userEmbedding = fetch('http://3.234.82.13:4000/get-embedding', {
+                  method: 'POST',
+                  mode: 'cors',
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                  },
+                  body: JSON.stringify({image: image})
+                }).then((res) => {
+                  console.log(res);
+                  return res.json();
+                })
+                .then((data) =>  {
+                  console.log(data);
+                  return data;
+                })
+              .catch((err)=>console.log(err));
           
-          // if(math.dot(image, user.image) > max){
+          var currEmbedding = fetch('http://3.234.82.13:4000/get-embedding', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({image: image})
+            }).then((res) => {
+              console.log(res);
+              return res.json();
+            })
+            .then((data) =>  {
+              console.log(data);
+              return data;
+            })
+            .catch((err)=>console.log(err));
+
+          // var dotProduct = math.dot(currEmbedding, userEmbedding);
+          // if(dotProduct > max){
+          //   max = dotProduct;
           //   maxUserId = user.boxId;
-          //   max = math.dot(image, user.image);
           // }
-          // console.log(math.dot([2, 4, 1], [2, 2, 3])  );
+
         }
       }
-      
-    })
-    console.log(max);
+    });
+    // console.log(max);
     //then get data for all that shit
     //return id but at some point change that to id (future)
-    // return maxUserId; 
+    return maxUserId; 
   }
 
   getPendingMail(userSession, boxId){
