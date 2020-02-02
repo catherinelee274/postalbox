@@ -1,0 +1,16 @@
+{
+  "port": 3000,
+  "driver": "google-cloud",
+  "bucket": "postalstorage",
+  "readURL": "https://console.cloud.google.com/storage/browser/postalstorage",
+  "argsTransport": {
+    "level": "debug",
+    "handleExceptions": true,
+    "timestamp": true,
+    "colorize": false,
+    "json": true
+  },
+  "gcCredentials": {
+    "projectId": "postalbox"
+  }
+}
