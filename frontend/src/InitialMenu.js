@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 //import { useHistory } from 'react-router-dom';
 import { Link, animateScroll as scroll } from "react-scroll";
+import Profile from './Profile.js';
 
 export default class InitialMenu extends Component {
   constructor(props) {
-      super(props);
-
+    super(props);
     this.state = {};
   }
 
@@ -14,7 +14,13 @@ export default class InitialMenu extends Component {
     scroll.scrollToTop();
   };
 
-  SignUp = () => {
+  handleSign = () => {
+
+  };
+
+
+
+  SignIn = () => {
     return (
         <Form>
             <FormGroup>
@@ -90,6 +96,8 @@ export default class InitialMenu extends Component {
 
                 </div>
             </div>
+            <Profile userSession={this.props.userSession}
+             handleSignOut={this.props.handleSignOut}/>
         </div>
     )
     ;
