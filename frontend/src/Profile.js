@@ -124,13 +124,13 @@ export default class Profile extends Component {
    //set up 
    // need to set up only unique users 
 
-    this.clear(userSession).then(()=>{
-      console.log("cleared");
-      currentId = 0;
-      return userSession.getFile("nutty.json")
-    })
+    // this.clear(userSession).then(()=>{
+    //   console.log("cleared");
+    //   currentId = 0;
+    //   return userSession.getFile("nutty.json")
+    // })
 
-    .then((responseData) => {
+    userSession.getFile("nutty.json").then((responseData) => {
       console.log("responseData:",responseData);
       // var jsonObject = JSON.parse(json);
       var jsonObject = JSON.parse(responseData);

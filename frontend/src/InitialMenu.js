@@ -70,7 +70,7 @@ export default class InitialMenu extends Component {
     else {
         userSession.getFile("nutty.json").then((responseData) => {
             var jsonObject = JSON.parse(responseData);
-            return jsonObject[userIdx].boxId;
+            alert("Your PO box is at box " + jsonObject[userIdx].poBox);
         });
     }
   
@@ -162,7 +162,10 @@ export default class InitialMenu extends Component {
                     </Link>
                 </div>
                 <div class="col-lg">
-                    <Link             
+                    <Link  
+                        onClick={()=> {
+                            this.getPendingMail(this.props.userSession, this.state.userIdx);
+                        }}           
                         activeClass="active"
                         style={{color: "white"}}
                         to="section1"
