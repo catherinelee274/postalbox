@@ -1,17 +1,33 @@
 import React, { Component } from 'react';
-import { Button } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 //import { useHistory } from 'react-router-dom';
 import { Link, animateScroll as scroll } from "react-scroll";
 
 export default class InitialMenu extends Component {
   constructor(props) {
-  	super(props);
+      super(props);
 
     this.state = {};
   }
 
   scrollToTop = () => {
     scroll.scrollToTop();
+  };
+
+  SignUp = () => {
+    return (
+        <Form>
+            <FormGroup>
+            <Label for="exampleEmail">Name</Label>
+            <Input type="email" name="email" id="exampleEmail" placeholder="Your Full Legal Name" />
+            </FormGroup>
+            <FormGroup>
+            <Label for="examplePassword">Password</Label>
+            <Input type="password" name="password" id="examplePassword" placeholder="password placeholder" />
+            </FormGroup>
+            <Button>Submit</Button>
+        </Form>
+    )   
   };
 
   render() {
