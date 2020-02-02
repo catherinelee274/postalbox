@@ -66,6 +66,9 @@ export default class Profile extends Component {
     return (
       !userSession.isSignInPending() ?
       <div className="panel-welcome" id="section-2">
+        {/* <div className="avatar-section">
+          <img src={ person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage } className="img-rounded avatar" id="avatar-image" alt=""/>
+        </div> */}
         <h1>Welcome</h1>
         <div>      
           <Webcam ref={this.webcam}
@@ -178,7 +181,6 @@ export default class Profile extends Component {
 
  signUp(userSession,image,name) {
    //set up 
-   // need to set up only unique users 
 
     // this.clear(userSession).then(()=>{
     //   console.log("cleared");

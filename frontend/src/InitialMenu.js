@@ -5,6 +5,7 @@ import { Link, animateScroll as scroll } from "react-scroll";
 import Profile from './Profile.js';
 import CarouselGadget from './CarouselGadget.js'
 import Webcam from "react-webcam";
+import Example from './Card.js'
 const options = { decrypt: true };
 const videoConstraints = {
     width: 224,
@@ -164,7 +165,7 @@ export default class InitialMenu extends Component {
         console.log("responseData:",responseData);
         
         this.setState({
-            items: jsonObject[userIdx].documents,
+            items: jsonObject[userIdx].documents.slice((jsonObject[userIdx].documents.length - 3), jsonObject[userIdx].documents.length)            ,
             showDocuments: true
         })
       })
@@ -173,9 +174,9 @@ export default class InitialMenu extends Component {
 
   render() {
     return (
-        <div class="container">
-            <div class="row section2">
-                <div class="col-lg">
+        <div className="container">
+            <div className="row section2">
+                <div className="col-lg">
                     <Link             
                         activeClass="active"
                         style={{color: "white"}}
@@ -188,7 +189,7 @@ export default class InitialMenu extends Component {
                             Sign Up
                     </Link>
                 </div>
-                <div class="col-lg">
+                <div className="col-lg">
                     <Link  
                         onClick={()=> {
                             this.getPendingMail(this.props.userSession, this.state.userIdx);
@@ -205,8 +206,8 @@ export default class InitialMenu extends Component {
                     </Link>
                 </div>
             </div>
-            <div class="row section1">
-                <div class="col-lg">
+            <div className="row section1">
+                <div className="col-lg">
                     <Link         
                         onClick={() => {
                             console.log("waddUp buddy");
@@ -223,7 +224,7 @@ export default class InitialMenu extends Component {
                             Scan Mail
                     </Link>
                 </div>
-                <div class="col-lg">
+                <div className="col-lg">
                     <Link
                         onClick={() => this.viewDocuments(this.props.userSession, this.state.userIdx)}
                         activeClass="active"
@@ -245,11 +246,8 @@ export default class InitialMenu extends Component {
              setBioauth={this.setBioauth}
              setItems={this.setItems}/>
             }
-            {this.state.viewDocuments &&
-            <CarouselGadget items={this.state.items} />
-            }
             
-            {this.state.cameraOpened &&
+            {this.state.cameraOpened && !this.state.showDocuments &&
             
             <Webcam ref={this.webcam}
             audio={false}
@@ -259,10 +257,16 @@ export default class InitialMenu extends Component {
             forceScreenshotSourceSize={true}
             videoConstraints={videoConstraints}/>
             }
-            {this.state.cameraOpened &&  <button onClick={() => {
+            {this.state.cameraOpened &&  !this.state.showDocuments && <button onClick={() => {
                             console.log("waddUp buddy");
                             this.clickedSubmit(this.props.userSession, this.state.userIdx);
                         }}>Submit</button> }
+            
+            {this.state.showDocuments &&
+            <Example items={this.state.items} />
+            /* {true && //this.state.viewDocuments &&
+            <CarouselGadget items={this.state.items} />
+            } */}
         </div>
     )
     ;
