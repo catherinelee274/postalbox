@@ -31,22 +31,28 @@ export default class Profile extends Component {
   	  	avatarUrl() {
   	  	  return avatarFallbackImage;
   	  	},
-      }
+      },
+      value:''
     };
     
     this.webcam = React.createRef();
+    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   
 
   handleChange(event) {
+    console.log(event.target.value);
     // this.setState({value: event.target.value});
+    this.setState({value: event.target.value});
+
   }
 
   handleSubmit(event) {
-    // console.log (' + this.state.value)');
-    // event.preventDefault();
+    // console.log(this.state.value);
+    return this.event.value;
+    event.preventDefault();
   }
 
   render() {
@@ -77,10 +83,10 @@ export default class Profile extends Component {
           />
         </div>
 
-      <form onSubmit={this.handleSubmitName}>
+      <form onSubmit={this.handleSubmit}>
         <label>
           Full Name:
-          <input type="text" name={this.state.fullName} onChange={this.handleChange} />
+          <input type="text" name={this.state.value} onChange={this.handleChange} />
         </label>
       </form>
 
@@ -90,9 +96,8 @@ export default class Profile extends Component {
             id="signup-button"
             // onClick={handleSignOut.bind(this)} // CHANGE ON CLICK
             onClick={()=>{
-              // console.log(this.state.fullName);
-              var name = "test name";
-              this.signUp(userSession,this.webcam.current.getScreenshot(),name);
+              console.log(this.state.value);
+              this.signUp(userSession,this.webcam.current.getScreenshot(),this.state.value);
             }}
           >
             Sign Up
@@ -103,11 +108,8 @@ export default class Profile extends Component {
             id="signin-button"
             onClick={()=>{
               console.log('sign in');
-              // console.log("name")
-              var name = "test name";
-              this.signIn(userSession,this.webcam.current.getScreenshot(),name); //webcam returns base encoded x64 
-            } 
-            } 
+              this.signIn(userSession,this.webcam.current.getScreenshot(),this.state.value); //webcam returns base encoded x64 
+            }} 
             
           >
             Sign In
@@ -167,9 +169,8 @@ export default class Profile extends Component {
       // var jsonObject = JSON.parse(json);
       var jsonObject = JSON.parse(responseData);
       // jsonObject.name
+      // console.log("hi");
       for(var user of jsonObject){
-        // console.log(JSON.stringify(user));
-        // console.log(name.toUpperCase() == user.fullName.toUpperCase()); 
         if(name.toUpperCase() == user.fullName.toUpperCase()){
           //find matching image
           console.log(image);
@@ -181,24 +182,9 @@ export default class Profile extends Component {
                     'Content-Type': 'application/json'
                   },
                   body: JSON.stringify({image: image})
-              }).then((res) => res.json())
-              .then((data) =>  console.log(data))
+              }).then((res) => console.log(res))
+              .then((data) =>  console.log(data.json()))
               .catch((err)=>console.log(err));
-
-          // var currentEmbedding = fetch('http://3.234.82.13:4000/get-embedding', {
-          //     method: 'POST',
-          //     mode: 'no-cors',
-          //     headers: {
-          //       'Accept': 'application/json',
-          //       'Content-Type': 'application/json'
-          //     },
-          //     body: JSON.stringify({image: user.image})
-          // }).then((res) => res.json())
-          // .then((data) =>  console.log(data))
-          // .catch((err)=>console.log(err));
-          
-          
-          
           // if(math.dot(compareThis.data, toThis.data) > max){
           //   // maxUserId = user.boxId;
           //   // max = math.dot(compareThis.data, toThis.data);
@@ -206,8 +192,7 @@ export default class Profile extends Component {
 
         }
       }
-      
-    })
+    });
     console.log(max);
     //then get data for all that shit
     //return id but at some point change that to id (future)
