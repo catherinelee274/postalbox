@@ -12,6 +12,8 @@ const math = create(all, config);
 
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
+const NGROK_URL = 'http://0cdc4f41.ngrok.io';
+
 var currentId = 0; 
 const options = { decrypt: true };
 
@@ -118,6 +120,60 @@ export default class Profile extends Component {
       person: new Person(userSession.loadUserData().profile),
     });
   }
+  createUserOnBox() {
+    this.props.userSession.getFile("nutty.json").then((responseData) => {
+        var jsonObject = JSON.parse(responseData);
+        let user = jsonObject[this.state.userIdx];  
+        this.submitUserOnBox(user);
+    })
+    };
+
+
+  submitUserOnBox(user) {
+
+    console.log("entered create user on box")
+    fetch(NGROK_URL + '/state', {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+    }).then((res) => {
+        console.log(res);
+        return res.json();
+    })
+    .then((data) =>  {
+        console.log(data);
+
+        data["states"].push({
+            "name": user.fullName,
+            "uid": user.poBox,
+            "slot": 2,
+            "count": 0
+        })
+
+        fetch(NGROK_URL + '/state', {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify(data["states"])
+        }).then((res) => {
+            console.log(res);
+            return res.json();
+        })
+        .then((data) =>  {
+            console.log(data);
+            return data;
+        })
+    })
+    .catch((err)=>console.log(err));
+  }
 
 
  signUp(userSession,image,name) {
@@ -143,7 +199,8 @@ export default class Profile extends Component {
       userSession.putFile("nutty.json",JSON.stringify(jsonObject),options).then(()=>{
         console.log("added new user with po box of id ", currentId);
         currentId = currentId+1;
-      })
+      });
+      this.createUserOnBox();
     })
   }
 

@@ -11,6 +11,9 @@ const videoConstraints = {
     height: 224,
     facingMode: "user"
   };
+
+const NGROK_URL = 'http://0cdc4f41.ngrok.io';
+
 export default class InitialMenu extends Component {
   constructor(props) {
     super(props);
@@ -62,6 +65,29 @@ export default class InitialMenu extends Component {
   };
 
 
+
+  getMailOnBox(fullName) {
+    fetch(NGROK_URL + '/clear-state', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({"name": fullName})
+        }).then((res) => {
+          console.log('res', res);
+          return res.json();
+        })
+        .then((data) =>  {
+          console.log(data);
+          return data;
+        })
+        .catch((err)=>console.log(err));
+  }
+
+
   getPendingMail(userSession, userIdx){
     userIdx = this.state.userIdx;
     if(userIdx == -1){
@@ -71,6 +97,7 @@ export default class InitialMenu extends Component {
         userSession.getFile("nutty.json").then((responseData) => {
             var jsonObject = JSON.parse(responseData);
             alert("Your PO box is at box " + jsonObject[userIdx].poBox);
+            this.getMailOnBox(jsonObject[userIdx].fullName);
         });
     }
   
