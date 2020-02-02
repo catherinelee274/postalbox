@@ -5,16 +5,12 @@ import {
 import { signInputs } from 'blockstack/lib/operations';
 
 import Webcam from "react-webcam";
-import { create, all } from 'mathjs'
+import { create, all } from 'mathjs';
 
-const config = { }
-const math = create(all, config)
+const config = { };
+const math = create(all, config);
 
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
-const {Storage} = require('@google-cloud/storage');
-
-var fs = require('fs');
-// var base64ToImage = require('base64-to-image');
 
 var currentId = 0; 
 const options = { decrypt: true };
