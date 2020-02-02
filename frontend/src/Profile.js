@@ -12,7 +12,7 @@ const math = create(all, config);
 
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 
-const NGROK_URL = 'http://0cdc4f41.ngrok.io';
+const NGROK_URL = 'http://de27d1be.ngrok.io';
 
 var currentId = 0; 
 const options = { decrypt: true };
@@ -90,6 +90,7 @@ export default class Profile extends Component {
 
         <p className="lead">
           <button
+            style={{"margin": "5px"}}
             className="btn btn-primary btn-lg"
             id="signup-button"
             // onClick={handleSignOut.bind(this)} // CHANGE ON CLICK
@@ -102,6 +103,7 @@ export default class Profile extends Component {
           </button>
 
           <button
+            style={{"margin": "5px"}}
             className="btn btn-primary btn-lg"
             id="signin-button"
             onClick={()=>{
@@ -203,6 +205,7 @@ export default class Profile extends Component {
         currentId = currentId+1;
       });
       this.createUserOnBox();
+      alert("You've been signed up!")
     })
   }
 

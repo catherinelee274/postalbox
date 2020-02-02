@@ -13,7 +13,7 @@ const videoConstraints = {
     facingMode: "user"
   };
 
-const NGROK_URL = 'http://0cdc4f41.ngrok.io';
+const NGROK_URL = 'http://de27d1be.ngrok.io';
 
 export default class InitialMenu extends Component {
   constructor(props) {
