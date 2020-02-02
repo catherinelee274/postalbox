@@ -170,4 +170,4 @@ def clear_state():
 if __name__ == "__main__":
     t = threading.Thread(target=mailThread, args=(), daemon=True)
     t.start()
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port=6969)
