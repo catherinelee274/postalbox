@@ -173,44 +173,57 @@ export default class Profile extends Component {
       for(var user of jsonObject){
         if(name.toUpperCase() == user.fullName.toUpperCase()){
           //find matching image
-          console.log(image);
           var userEmbedding = fetch('http://3.234.82.13:4000/get-embedding', {
                   method: 'POST',
-                  mode: 'no-cors',
+                  mode: 'cors',
                   headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
                   },
                   body: JSON.stringify({image: image})
-              }).then((res) => console.log(res))
-              .then((data) =>  console.log(data.json()))
+                }).then((res) => {
+                  console.log(res);
+                  return res.json();
+                })
+                .then((data) =>  {
+                  console.log(data);
+                  return data;
+                })
               .catch((err)=>console.log(err));
-          // if(math.dot(compareThis.data, toThis.data) > max){
-          //   // maxUserId = user.boxId;
-          //   // max = math.dot(compareThis.data, toThis.data);
+          
+          var currEmbedding = fetch('http://3.234.82.13:4000/get-embedding', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({image: image})
+            }).then((res) => {
+              console.log(res);
+              return res.json();
+            })
+            .then((data) =>  {
+              console.log(data);
+              return data;
+            })
+            .catch((err)=>console.log(err));
+
+          // var dotProduct = math.dot(currEmbedding, userEmbedding);
+          // if(dotProduct > max){
+          //   max = dotProduct;
+          //   maxUserId = user.boxId;
           // }
 
         }
       }
     });
-    console.log(max);
+    // console.log(max);
     //then get data for all that shit
     //return id but at some point change that to id (future)
-    // return maxUserId; 
-  }
-
-  decodeBase64Image(dataString) {
-    var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
-      response = {};
-  
-    if (matches.length !== 3) {
-      return new Error('Invalid input string');
-    }
-  
-    response.type = matches[1];
-    response.data = new Buffer(matches[2], 'base64');
-  
-    return response;
+    return maxUserId; 
   }
 
   getPendingMail(userSession, boxId){
