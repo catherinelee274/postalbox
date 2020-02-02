@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Person, handlePendingSignIn,
+  Person, handlePendingSignIn, ecPairToHexString,
 } from 'blockstack';
 import { signInputs } from 'blockstack/lib/operations';
 
@@ -12,6 +12,9 @@ const math = create(all, config)
 
 const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
 const {Storage} = require('@google-cloud/storage');
+
+var fs = require('fs');
+// var base64ToImage = require('base64-to-image');
 
 var currentId = 0; 
 const options = { decrypt: true };
@@ -28,16 +31,24 @@ export default class Profile extends Component {
   	  	avatarUrl() {
   	  	  return avatarFallbackImage;
   	  	},
-  	  },
+      }
     };
     
     this.webcam = React.createRef();
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(){
+  
 
+  handleChange(event) {
+    // this.setState({value: event.target.value});
   }
+
+  handleSubmit(event) {
+    // console.log (' + this.state.value)');
+    // event.preventDefault();
+  }
+
   render() {
     const { handleSignOut, userSession } = this.props;
     const { person } = this.state;
@@ -58,17 +69,18 @@ export default class Profile extends Component {
         <div>      
           <Webcam ref={this.webcam}
             audio={false}
-            height={720}
+            height={500} 
             screenshotFormat="image/jpeg"
-            width={1280}
+            width={500} 
+            forceScreenshotSourceSize={true}
             videoConstraints={videoConstraints}
           />
         </div>
 
-      <form>
+      <form onSubmit={this.handleSubmitName}>
         <label>
           Full Name:
-          <input type="text" name={this.state.fullName} />
+          <input type="text" name={this.state.fullName} onChange={this.handleChange} />
         </label>
       </form>
 
@@ -160,13 +172,38 @@ export default class Profile extends Component {
         // console.log(name.toUpperCase() == user.fullName.toUpperCase()); 
         if(name.toUpperCase() == user.fullName.toUpperCase()){
           //find matching image
-          // console.log(JSON.parse(atob(user.image)));
+          console.log(image);
+          var userEmbedding = fetch('http://3.234.82.13:4000/get-embedding', {
+                  method: 'POST',
+                  mode: 'no-cors',
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({image: image})
+              }).then((res) => res.json())
+              .then((data) =>  console.log(data))
+              .catch((err)=>console.log(err));
+
+          // var currentEmbedding = fetch('http://3.234.82.13:4000/get-embedding', {
+          //     method: 'POST',
+          //     mode: 'no-cors',
+          //     headers: {
+          //       'Accept': 'application/json',
+          //       'Content-Type': 'application/json'
+          //     },
+          //     body: JSON.stringify({image: user.image})
+          // }).then((res) => res.json())
+          // .then((data) =>  console.log(data))
+          // .catch((err)=>console.log(err));
           
-          // if(math.dot(image, user.image) > max){
-          //   maxUserId = user.boxId;
-          //   max = math.dot(image, user.image);
+          
+          
+          // if(math.dot(compareThis.data, toThis.data) > max){
+          //   // maxUserId = user.boxId;
+          //   // max = math.dot(compareThis.data, toThis.data);
           // }
-          // console.log(math.dot([2, 4, 1], [2, 2, 3])  );
+
         }
       }
       
@@ -175,6 +212,20 @@ export default class Profile extends Component {
     //then get data for all that shit
     //return id but at some point change that to id (future)
     // return maxUserId; 
+  }
+
+  decodeBase64Image(dataString) {
+    var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
+      response = {};
+  
+    if (matches.length !== 3) {
+      return new Error('Invalid input string');
+    }
+  
+    response.type = matches[1];
+    response.data = new Buffer(matches[2], 'base64');
+  
+    return response;
   }
 
   getPendingMail(userSession, boxId){
