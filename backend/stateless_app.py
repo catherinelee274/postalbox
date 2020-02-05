@@ -9,8 +9,7 @@ from keras_vggface.utils import preprocess_input
 import os
 from flask import Flask, request, Response #import main Flask class and request object
 import numpy as np
-import binascii 
-import cv2
+import binascii
 import base64
 import io
 from flask_cors import CORS

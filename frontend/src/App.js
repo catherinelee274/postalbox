@@ -6,8 +6,10 @@ import {
   AppConfig
 } from 'blockstack';
 
-const appConfig = new AppConfig()
-const userSession = new UserSession({ appConfig: appConfig })
+import InitialMenu from './InitialMenu.js';
+
+const appConfig = new AppConfig();
+const userSession = new UserSession({ appConfig: appConfig });
 
 export default class App extends Component {
 
@@ -33,7 +35,7 @@ export default class App extends Component {
         <div className="site-wrapper-inner">
           { !userSession.isUserSignedIn() ?
             <Signin userSession={userSession} handleSignIn={ this.handleSignIn } />
-            : <Profile userSession={userSession} handleSignOut={ this.handleSignOut } />
+            : <InitialMenu userSession={userSession} handleSignOut={ this.handleSignOut } />
           }
         </div>
       </div>

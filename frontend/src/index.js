@@ -13,7 +13,7 @@ function MainApp() {
         <div>
             <Switch>
                 <Route path="/po">
-                    <InitialMenu />
+                    <App />
                 </Route>
                 <Route path="/">
                     <App />
