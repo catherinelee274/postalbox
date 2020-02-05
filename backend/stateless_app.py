@@ -52,7 +52,10 @@ def extract_face(filename, required_size=(224, 224),file_bool=True):
         # extract the face
         face = pixels[y1:y2, x1:x2]
         # resize pixels to the model size
-        image = Image.fromarray(face)
+        try:
+            image = Image.fromarray(face)
+        except ValueError as e:
+            image = Image.fromarray(pixels)
         image = image.resize(required_size)
         face_array = asarray(image)
     return face_array
