@@ -17,7 +17,7 @@
     "blockstack": "^19.2.5",
     "file-system": "^2.2.2",
     "install": "^0.13.0",
-    "mathjs": "^6.6.0",
+    "mathjs": "^7.5.1",
     "nice-try": "^2.0.0",
     "npm": "^6.13.7",
     "react": "^16.8.6",
